@@ -4,7 +4,7 @@
   - more apples
   - apples spawn in randomish places
 
-### platformer [DONEISH]
+### platformer [IN DEVELOPMENT]
   things to add:
   - more platforms
   - more enemys
