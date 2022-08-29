@@ -1,6 +1,6 @@
 ## A few ArmStrong programs i made
 ~~~
-### snake [DONE]
+snake [DONE]
   playable: yes
   things to add:
   - more apples
@@ -8,7 +8,7 @@
 ~~~
 
 ~~~
-### platformer [IN DEVELOPMENT]
+platformer [IN DEVELOPMENT]
   playable: yes
   things to add:
   - more platforms
@@ -16,6 +16,6 @@
 ~~~
 
 ~~~
-### flappy bird [IN DEVELOPMENT]
+flappy bird [IN DEVELOPMENT]
   playable: no
 ~~~
