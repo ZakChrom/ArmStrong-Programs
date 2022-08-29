@@ -1,0 +1,542 @@
+#AS
+// Variables
+
+change $DEBUG = 0
+
+change @EX = 168
+change $chMemOffset = 16382
+change $memoryOffset = 61439
+change $charCount = 0
+change $pX = 0
+change $pY = 0
+change $color = 0
+change $time = 0
+change $lastKey = 168
+change $tgl = 0
+change $enemyCount = 2
+
+change $enemyX = 18
+change $enemyY = 57
+change $enemyTgl = 0
+change $enemyTemp = 0
+
+change $enemy2X = 32
+change $enemy2Y = 52
+change $enemy2Tgl = 0
+change $enemy2Temp = 0
+
+change $bulletX = 0
+change $bulletY = 65
+change $bulletTgl = 0
+
+change $playerX = 31
+change $playerY = 63
+change $jumping = 0
+change $jumping2 = 0
+change $GRAVITY = 4
+change $playerVelY = $GRAVITY
+change $tempX = 0
+change $direction = 2
+
+change $objectX = 30
+change $objectY = 62
+change $objectW = 3
+change $objectD = $objectW
+change $objectT = 0
+
+change $object2X = 34
+change $object2Y = 60
+change $object2W = 3
+change $object2D = $object2W
+change $object2T = 0
+
+change $object3X = 18
+change $object3Y = 58
+change $object3W = 10
+change $object3D = $object3W
+change $object3T = 0
+
+change $object4X = 32
+change $object4Y = 53
+change $object4W = 4
+change $object4D = $object4W
+change $object4T = 0
+
+change $object5X = 13
+change $object5Y = 58
+change $object5W = 3
+change $object5D = $object5W
+change $object5T = 0
+
+change $object6X = 27
+change $object6Y = 53
+change $object6W = 3
+change $object6D = $object6W
+change $object6T = 0
+
+// Color
+add 255,255 -> $color
+add 255,$color -> $color
+
+#mainLoop
+
+// Something
+mult $pY,64 -> $actualAddress // Calculate Y position
+add $pX,$actualAddress -> $actualAddress // Calculate X position
+add $memoryOffset,$actualAddress -> $actualAddress // Add offset
+change *$actualAddress = 0
+if $DEBUG==1:
+	if $pY==0:
+		if $pX==0:
+			if $enemyTgl==0:
+				change *$actualAddress = 31744
+			endif
+			if $enemyTgl==1:
+				change *$actualAddress = $color
+			endif
+		endif
+		if $pX==1:
+			if $enemy2Tgl==0:
+				change *$actualAddress = 31744
+			endif
+			if $enemy2Tgl==1:
+				change *$actualAddress = $color
+			endif
+		endif
+	endif
+	if $pY==1:
+		if $pX==0:
+			if $bulletTgl==0:
+				change *$actualAddress = 31744
+			endif
+			if $bulletTgl==1:
+				change *$actualAddress = $color
+			endif
+		endif
+	endif
+	if $pY==2:
+		if $pX==0:
+			change *$actualAddress = $playerX
+		endif
+		if $pY==0:
+			change *$actualAddress = $playerY
+		endif
+	endif
+endif
+if $bulletTgl==1:
+	if $pX==$bulletX:
+		if $pY==$bulletY:
+			change *$actualAddress = 32736
+		endif
+	endif
+endif
+if $pX==$playerX:
+    if $pY==$playerY:
+        change *$actualAddress = $color
+    endif
+endif
+if $pX==$enemyX:
+    if $pY==$enemyY:
+        change *$actualAddress = 31744
+    endif
+endif
+if $playerX==$enemyX:
+	if $playerY==$enemyY:
+		goto #death
+	endif
+endif
+if $bulletX==$enemyX:
+	if $bulletY==$enemyY:
+		change $enemyTgl = 3
+		change $enemyX = 65
+		change $bulletTgl = 0
+		sub $enemyCount,1 -> $enemyCount
+	endif
+endif
+if $pX==$enemy2X:
+    if $pY==$enemy2Y:
+        change *$actualAddress = 31744
+    endif
+endif
+if $playerX==$enemy2X:
+	if $playerY==$enemy2Y:
+		goto #death
+	endif
+endif
+if $bulletX==$enemy2X:
+	if $bulletY==$enemy2Y:
+		change $enemy2Tgl = 3
+		change $enemy2X = 65
+		change $bulletTgl = 0
+		sub $enemyCount,1 -> $enemyCount
+	endif
+endif
+if $pY==$objectY:
+    if $pX==$objectX:
+        change $objectT = 1
+    endif
+    if $objectT==1:
+        if $objectW!=0:
+            change *$actualAddress = 578
+            sub $objectW,1 -> $objectW
+        endif
+        if $objectW==0:
+            change $objectT = 0
+            change $objectW = $objectD
+        endif
+    endif
+endif
+if $pY==$object2Y:
+    if $pX==$object2X:
+        change $object2T = 1
+    endif
+    if $object2T==1:
+        if $object2W!=0:
+            change *$actualAddress = 578
+            sub $object2W,1 -> $object2W
+        endif
+        if $object2W==0:
+            change $object2T = 0
+            change $object2W = $object2D
+        endif
+    endif
+endif
+if $pY==$object3Y:
+    if $pX==$object3X:
+        change $object3T = 1
+    endif
+    if $object3T==1:
+        if $object3W!=0:
+            change *$actualAddress = 578
+            sub $object3W,1 -> $object3W
+        endif
+        if $object3W==0:
+            change $object3T = 0
+            change $object3W = $object3D
+        endif
+    endif
+endif
+if $pY==$object4Y:
+    if $pX==$object4X:
+        change $object4T = 1
+    endif
+    if $object4T==1:
+        if $object4W!=0:
+            change *$actualAddress = 578
+            sub $object4W,1 -> $object4W
+        endif
+        if $object4W==0:
+            change $object4T = 0
+            change $object4W = $object4D
+        endif
+    endif
+endif
+if $pY==$object5Y:
+    if $pX==$object5X:
+        change $object5T = 1
+    endif
+    if $object5T==1:
+        if $object5W!=0:
+            change *$actualAddress = 578
+            sub $object5W,1 -> $object5W
+        endif
+        if $object5W==0:
+            change $object5T = 0
+            change $object5W = $object5D
+        endif
+    endif
+endif
+if $pY==$object6Y:
+    if $pX==$object6X:
+        change $object6T = 1
+    endif
+    if $object6T==1:
+        if $object6W!=0:
+            change *$actualAddress = 578
+            sub $object6W,1 -> $object6W
+        endif
+        if $object6W==0:
+            change $object6T = 0
+            change $object6W = $object6D
+        endif
+    endif
+endif
+add $pX,1 -> $pX
+if $pX==64:
+    change $pX = 0
+    add $pY,1 -> $pY
+    if $pY==64:
+        change $objectD = $objectW
+        change $object2D = $object2W
+        change $object3D = $object3W
+		change $pY = 0
+    endif
+endif
+
+if $time>8000:
+	if $bulletTgl==0:
+		change $bulletX = $playerX
+		change $bulletY = $playerY
+	endif
+	if $bulletTgl==1:
+		if $bulletX<0:
+			change $bulletTgl = 0
+			change $bulletX = 65
+		endif
+		if $bulletX>64:
+			change $bulletTgl = 0
+			change $bulletX = 65
+		endif
+		if $bulletY<0:
+			change $bulletTgl = 0
+			change $bulletX = 65
+		endif
+		if $bulletY>64:
+			change $bulletTgl = 0
+			change $bulletX = 65
+		endif
+		if $direction==0:
+			add $bulletX,1 -> $bulletX
+		endif
+		if $direction==1:
+			add $bulletY,1 -> $bulletY
+		endif
+		if $direction==2:
+			sub $bulletX,1 -> $bulletX
+		endif
+		if $direction==3:
+			sub $bulletY,1 -> $bulletY
+		endif
+	endif
+	if $enemyTgl==0:
+		add $enemyX,1 -> $enemyX
+		add $object3X,$object3W -> $enemyTemp
+		sub $enemyTemp,1 -> $enemyTemp
+		if $enemyX>$enemyTemp:
+			change $enemyTgl = 1
+		endif
+	endif
+	if $enemyTgl==1:
+		sub $enemyX,1 -> $enemyX
+		change $enemyTemp = $object3X
+		sub $enemyTemp,1 -> $enemyTemp
+		if $enemyX<=$enemyTemp:
+			change $enemyTgl = 0
+			add $enemyX,1 -> $enemyX
+		endif
+	endif
+	if $enemy2Tgl==0:
+		add $enemy2X,1 -> $enemy2X
+		add $object4X,$object4W -> $enemy2Temp
+		sub $enemy2Temp,1 -> $enemy2Temp
+		if $enemy2X>$enemy2Temp:
+			change $enemy2Tgl = 1
+		endif
+	endif
+	if $enemy2Tgl==1:
+		sub $enemy2X,1 -> $enemy2X
+		change $enemy2Temp = $object4X
+		sub $enemy2Temp,1 -> $enemy2Temp
+		if $enemy2X<=$enemy2Temp:
+			change $enemy2Tgl = 0
+			add $enemy2X,1 -> $enemy2X
+		endif
+	endif
+    if $jumping==1:
+		if $jumping2==1:
+			sub $playerVelY,1 -> $playerVelY
+			sub $playerY,$playerVelY -> $playerY
+			if $playerVelY==0:
+				change $jumping = 0
+				change $playerVelY = $GRAVITY
+			endif
+		endif
+    endif
+    if $jumping==0:
+        add $playerY,1 -> $playerY
+        if $playerY>63:
+            change $playerY = 63
+			change $jumping2 = 0
+        endif
+        change $tempX = $objectW
+        if $playerY==$objectY:
+            #Collison
+            add $tempX,$objectX -> $tempX
+            sub $tempX,1 -> $tempX
+            if $playerX==$tempX:
+                sub $objectY,1 -> $playerY
+				change $jumping2 = 0
+            endif
+            sub $tempX,$objectX -> $tempX
+            gotoif $tempX!=0, #Collison
+        endif
+        change $tempX = $object2W
+        if $playerY==$object2Y:
+            #Collison2
+            add $tempX,$object2X -> $tempX
+            sub $tempX,1 -> $tempX
+            if $playerX==$tempX:
+                sub $object2Y,1 -> $playerY
+				change $jumping2 = 0
+            endif
+            sub $tempX,$object2X -> $tempX
+            gotoif $tempX!=0, #Collison2
+        endif
+        change $tempX = $object3W
+        if $playerY==$object3Y:
+            #Collison3
+            add $tempX,$object3X -> $tempX
+            sub $tempX,1 -> $tempX
+            if $playerX==$tempX:
+                sub $object3Y,1 -> $playerY
+				change $jumping2 = 0
+            endif
+            sub $tempX,$object3X -> $tempX
+            gotoif $tempX!=0, #Collison3
+        endif
+		change $tempX = $object4W
+        if $playerY==$object4Y:
+            #Collison4
+            add $tempX,$object4X -> $tempX
+            sub $tempX,1 -> $tempX
+            if $playerX==$tempX:
+                sub $object4Y,1 -> $playerY
+				change $jumping2 = 0
+            endif
+            sub $tempX,$object4X -> $tempX
+            gotoif $tempX!=0, #Collison4
+        endif
+		change $tempX = $object5W
+		if $playerY==$object5Y:
+            #Collison5
+            add $tempX,$object5X -> $tempX
+            sub $tempX,1 -> $tempX
+            if $playerX==$tempX:
+                sub $object5Y,1 -> $playerY
+				change $jumping2 = 0
+            endif
+            sub $tempX,$object5X -> $tempX
+            gotoif $tempX!=0, #Collison5
+        endif
+		if $playerY==$object6Y:
+            #Collison6
+            add $tempX,$object6X -> $tempX
+            sub $tempX,1 -> $tempX
+            if $playerX==$tempX:
+                sub $object6Y,1 -> $playerY
+				change $jumping2 = 0
+            endif
+            sub $tempX,$object6X -> $tempX
+            gotoif $tempX!=0, #Collison6
+        endif
+    endif
+
+    // Keys // w 35 a 13 d 16 ((SPACE)) 0
+    change $key = @EX
+    // Jump
+    if $key==35:
+        if $lastKey!=$key:
+            if $jumping==0:
+				if $jumping2==0:
+					change $jumping2 = 1
+					change $jumping = 1
+					if $bulletTgl==0:
+						change $direction = 3
+					endif
+				endif
+            endif
+        endif
+    endif
+    // Left
+    if $key==13:
+        sub $playerX,1 -> $playerX
+        if $playerX<1:
+            change $playerX = 1
+        endif
+		if $bulletTgl==0:
+			change $direction = 2
+		endif
+    endif
+    // Right
+    if $key==16:
+        add $playerX,1 -> $playerX
+        if $playerX>62:
+            change $playerX = 62
+        endif
+		if $bulletTgl==0:
+			change $direction = 0
+		endif
+    endif
+	if $key==0:
+		if $bulletTgl==0:
+			change $bulletTgl = 1
+		endif
+	endif
+    change $time = 0
+    change $lastKey = $key
+	if $enemyCount==0:
+		goto #end
+	endif
+endif
+
+add $time,1 -> $time
+
+goto #mainLoop
+
+
+#death
+change $charCount = 41
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'y'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'o'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'u'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 0
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'd'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'i'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'e'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'd'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 75
+goto #death
+
+#end
+change $charCount = 41
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'y'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'o'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'u'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 0
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'w'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'i'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'n'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 76
+goto #end

@@ -1,0 +1,235 @@
+#AS
+change $vidMemOffset = 61439
+change $chMemOffset = 16382
+change $pX = 0
+change $pY = 0
+change @EX = 168
+change $lastKey = 168
+change $time = 0
+change $temp = 0
+change $temp2 = 0
+
+change $pink = 30000
+change $blueGreen = 10000
+change $green = 0b000001100000000
+change $darkerGreen = 0b000001001100000
+change $purple = 18452
+change $blue = 3484
+change $white = 0b111111111111111
+
+change $playerX = 4
+change $playerY = 32
+change $jumping = 0
+change $GRAVITY = 4
+change $playerVelY = $GRAVITY
+
+change $wallsPassed = 0
+
+change $wallX = 58
+change $wallY = 0
+change $wallHeight = 28
+change $wallY2 = 38
+change $wallHeight2 = 60
+
+change $wall2X = 58
+change $wall2Y = 0
+change $wall2Height = 28
+change $wall2Y2 = 38
+change $wall2Height2 = 60
+
+#MainLoop
+mult $pY,64 -> $actualAddress
+add $pX,$actualAddress -> $actualAddress
+add $vidMemOffset,$actualAddress -> $actualAddress
+
+change *$actualAddress = $blue
+if $pY<=5:
+	change *$actualAddress = $white
+endif
+if $pY>=61:
+	change *$actualAddress = $green
+endif
+if $pX==$playerX:
+	if $pY==$playerY:
+		change *$actualAddress = $pink
+	endif
+endif
+if $wallsPassed==0:
+	if $pX>=$wallX:
+		add $wallX,5 -> $temp
+		if $pY>=$wallY:
+			if $pX<=$temp:
+				if $pY<=$wallHeight:
+					change *$actualAddress = $darkerGreen
+				endif
+			endif
+		endif
+		if $pY>=$wallY2:
+			if $pX<=$temp:
+				if $pY<=$wallHeight2:
+					change *$actualAddress = $darkerGreen
+				endif
+			endif
+		endif
+	endif
+endif
+if $wallsPassed==1:
+	if $pX>=$wall2X:
+		add $wall2X,5 -> $temp2
+		if $pY>=$wall2Y:
+			if $pX<=$temp2:
+				if $pY<=$wall2Height:
+					change *$actualAddress = $darkerGreen
+				endif
+			endif
+		endif
+		if $pY>=$wall2Y2:
+			if $pX<=$temp2:
+				if $pY<=$wall2Height2:
+					change *$actualAddress = $darkerGreen
+				endif
+			endif
+		endif
+	endif
+endif
+
+
+if $time>10000:
+	if $jumping==1:
+		sub $playerVelY,1 -> $playerVelY
+		sub $playerY,$playerVelY -> $playerY
+		if $playerVelY==0:
+			change $jumping = 0
+			change $playerVelY = $GRAVITY
+		endif
+	endif
+	if $jumping==0:
+		add $playerY,1 -> $playerY
+		if $playerY>60:
+			goto #death
+		endif
+	endif
+	change $time = 0
+	if $wallsPassed==0:
+		sub $wallX,1 -> $wallX
+		if $playerX>=$temp:
+			add $wallsPassed,1 -> $wallsPassed
+		endif
+		if $playerX>=$wallX:
+			if $playerX<=$temp:
+				if $playerY<$wallHeight:
+					goto #death
+				endif
+				if $playerY>=$wallY2:
+					if $playerY<=$wallHeight2:
+						goto #death
+					endif
+				endif
+			endif
+		endif
+	endif
+	if $wallsPassed==1:
+		sub $wall2X,1 -> $wall2X
+		if $playerX>=$temp2:
+			add $wallsPassed,1 -> $wallsPassed
+		endif
+		if $playerX>=$wall2X:
+			if $playerX<=$temp2:
+				if $playerY<$wall2Height:
+					goto #death
+				endif
+				if $playerY>=$wall2Y2:
+					if $playerY<=$wall2Height2:
+						goto #death
+					endif
+				endif
+			endif
+		endif
+	endif
+endif
+
+add $time,1 -> $time
+
+add $pX,1 -> $pX
+if $pX==64:
+    change $pX = 0
+    add $pY,1 -> $pY
+    if $pY==64:
+        change $pY = 0
+    endif
+endif
+
+change $key = @EX
+if $key!=168:
+	if $key!=$lastKey:
+		if $key==0:
+			if $jumping==0:
+				change $jumping = 1
+            endif
+		endif
+		change $lastKey = $key
+	endif
+endif
+
+if $key==168:
+    change $lastKey = $key
+endif
+
+goto #MainLoop
+
+#death
+change $charCount = 41
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'y'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'o'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'u'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 0
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'd'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'i'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'e'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'd'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 75
+goto #death
+
+#end
+change $charCount = 41
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'y'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'o'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'u'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 0
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'w'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'i'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 'n'
+add $charCount,1 -> $charCount
+add $chMemOffset,$charCount -> $actualAddress
+change *$actualAddress = 76
+goto #end
